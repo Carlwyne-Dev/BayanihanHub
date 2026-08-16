@@ -6,7 +6,7 @@ import * as L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import Link from 'next/link';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { Heart, Utensils, Package, Home, Info, Car, MoreHorizontal, AlertTriangle, HandHeart } from 'lucide-react';
+import { Heart, Utensils, Package, Home, Info, Car, MoreHorizontal, AlertTriangle, HandHeart, Wrench, PawPrint } from 'lucide-react';
 import type { Request } from '@/lib/db/schema';
 import { getCategoryColor, TypeBadge, UrgencyChip } from './Badges';
 
@@ -17,26 +17,31 @@ const URGENCY_COLORS: Record<string, string> = {
 };
 
 const CATEGORY_ICONS: Record<string, React.ReactNode> = {
-  health: <Heart size={15} color="white" />,
-  food: <Utensils size={15} color="white" />,
-  supplies: <Package size={15} color="white" />,
-  shelter: <Home size={15} color="white" />,
-  information: <Info size={15} color="white" />,
-  transport: <Car size={15} color="white" />,
-  other: <MoreHorizontal size={15} color="white" />,
+  items: <Package size={14} color="white" />,
+  services: <Wrench size={14} color="white" />,
+  transport: <Car size={14} color="white" />,
+  food: <Utensils size={14} color="white" />,
+  health: <Heart size={14} color="white" />,
+  shelter: <Home size={14} color="white" />,
+  pets: <PawPrint size={14} color="white" />,
+  information: <Info size={14} color="white" />,
+  other: <MoreHorizontal size={14} color="white" />,
 };
 
-function getMarkerIcon(category: string, isUrgent: boolean) {
+function getMarkerIcon(category: string, isUrgent: boolean, type: 'ASK' | 'OFFER') {
   const bg = isUrgent ? URGENCY_COLORS.urgent : getCategoryColor(category as any);
   const iconNode = isUrgent ? <AlertTriangle size={18} color="white" /> : (CATEGORY_ICONS[category] || CATEGORY_ICONS.other);
   const size = isUrgent ? 36 : 28;
+  
+  // ASK is circle, OFFER is rounded square (squircle)
+  const borderRadius = isUrgent ? '50%' : (type === 'ASK' ? '50%' : '8px');
   
   const html = renderToStaticMarkup(
     <div style={{
       backgroundColor: bg,
       width: `${size}px`,
       height: `${size}px`,
-      borderRadius: '50%',
+      borderRadius,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -102,7 +107,7 @@ export default function MapView({ filter }: MapViewProps) {
         <Marker
           key={r.id}
           position={[r.locationLat!, r.locationLng!]}
-          icon={getMarkerIcon(r.category, r.urgency === 'urgent')}
+          icon={getMarkerIcon(r.category, r.urgency === 'urgent', r.type)}
         >
           <Popup>
             <div className="font-sans min-w-[220px]">
