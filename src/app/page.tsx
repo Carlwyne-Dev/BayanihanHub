@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight, HeartHandshake, MapPin, ShieldAlert, Sparkles, Navigation, Users, ShieldCheck } from 'lucide-react';
 import { Footer } from '@/components/Footer';
 import { Globe } from '@/components/Globe';
@@ -38,9 +39,21 @@ export default function LandingPage() {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="absolute top-0 w-full z-50 px-6 py-6 md:px-12 flex justify-between items-center border-b border-outline-variant/30 bg-background/50 backdrop-blur-sm"
       >
-        <div className="text-xl md:text-2xl font-bold tracking-tight text-primary" style={{ fontFamily: 'Be Vietnam Pro, sans-serif' }}>
-          BayanihanHub
-        </div>
+        <Link href="/" className="flex items-center gap-2">
+          <div style={{ width: 32, height: 32, borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
+            <Image
+              src="/logo.png"
+              alt="BayanihanHub logo"
+              width={32}
+              height={32}
+              className="w-full h-full object-cover scale-[1.15]"
+              priority
+            />
+          </div>
+          <span className="text-xl md:text-2xl font-bold tracking-tight text-primary" style={{ fontFamily: 'Be Vietnam Pro, sans-serif' }}>
+            BayanihanHub
+          </span>
+        </Link>
         <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
           <Link 
             href="/feed" 
