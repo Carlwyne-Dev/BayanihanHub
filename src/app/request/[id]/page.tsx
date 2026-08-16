@@ -420,8 +420,8 @@ function RequestDetailContent() {
                         <p className="text-lg font-semibold text-on-surface">Here's how to reach them:</p>
                         <div className="bg-primary-fixed rounded-xl p-4 flex flex-col gap-2">
                           {offerResult.contactMethod.split(' | ').filter(Boolean).map((c, i) => (
-                            <div key={i} className="text-base font-semibold text-on-surface break-all flex items-center gap-2">
-                              <span>{i === 0 ? '📞' : '💬'}</span> {c}
+                            <div key={i} className="text-base font-semibold text-on-surface break-all">
+                              {c}
                             </div>
                           ))}
                         </div>
