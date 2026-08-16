@@ -1,11 +1,25 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Loader2, ShieldAlert, CheckCircle2, XCircle, Clock, Users, HeartHandshake, Sparkles, RotateCcw } from 'lucide-react';
+import { Loader2, ShieldAlert, CheckCircle2, XCircle, Clock, Users, HeartHandshake, Sparkles, RotateCcw, BarChart2, Eye, PlusCircle, Share2, Flag, Star } from 'lucide-react';
 import type { Request } from '@/lib/db/schema';
 import { formatRelativeTime } from '@/lib/utils';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
+
+type AnalyticsData = {
+  totals: {
+    visits: number;
+    request_views: number;
+    requests_created: number;
+    offers_made: number;
+    shares: number;
+    reports_filed: number;
+    requests_resolved: number;
+  };
+  uniqueSessions: number;
+  recentEvents: { id: string; eventType: string; requestId: string | null; sessionRef: string; createdAt: string }[];
+};
 
 export default function AdminPage() {
   const [pass, setPass] = useState('');
@@ -13,10 +27,12 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [requests, setRequests] = useState<Request[]>([]);
   const [error, setError] = useState('');
-  const [activeTab, setActiveTab] = useState<'all' | 'reported' | 'needs_review' | 'active'>('all');
+  const [activeTab, setActiveTab] = useState<'all' | 'reported' | 'needs_review' | 'active' | 'analytics'>('all');
   const [confirmModal, setConfirmModal] = useState<{ id: string, action: 'approve' | 'expire' | 'resolve' | 'revert' } | null>(null);
   const [actionLoading, setActionLoading] = useState(false);
-  const [aiAdvice, setAiAdvice] = useState<Record<string, { loading: boolean, text?: string, error?: string }>>({});
+  const [aiAdvice, setAiAdvice] = useState<Record<string, { loading: boolean, text?: string, error?: string }>>({}); 
+  const [analyticsData, setAnalyticsData] = useState<AnalyticsData | null>(null);
+  const [analyticsLoading, setAnalyticsLoading] = useState(false);
 
   useEffect(() => {
     const saved = localStorage.getItem('admin_pass');
@@ -25,6 +41,29 @@ export default function AdminPage() {
       fetchQueue(saved);
     }
   }, []);
+
+  useEffect(() => {
+    if (activeTab === 'analytics' && isAuth && !analyticsData) {
+      fetchAnalytics();
+    }
+  }, [activeTab, isAuth]);
+
+  async function fetchAnalytics() {
+    setAnalyticsLoading(true);
+    try {
+      const saved = localStorage.getItem('admin_pass');
+      const res = await fetch('/api/admin/analytics', {
+        headers: { 'Authorization': `Bearer ${saved}` }
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Failed');
+      setAnalyticsData(data.data);
+    } catch (err: any) {
+      toast.error('Failed to load analytics: ' + err.message);
+    } finally {
+      setAnalyticsLoading(false);
+    }
+  }
 
   async function fetchQueue(password: string) {
     setLoading(true);
@@ -172,22 +211,87 @@ export default function AdminPage() {
           <div className="flex flex-col gap-6">
             
             <div className="flex flex-wrap items-center gap-2 pb-4 border-b border-outline-variant">
-              {(['all', 'reported', 'needs_review', 'active'] as const).map(tab => (
+              {(['all', 'reported', 'needs_review', 'active', 'analytics'] as const).map(tab => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors ${
+                  className={`px-4 py-2 rounded-full text-sm font-semibold transition-colors flex items-center gap-1.5 ${
                     activeTab === tab 
                       ? 'bg-primary text-on-primary' 
                       : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high'
                   }`}
                 >
-                  {tab === 'all' ? 'All Pending' : tab === 'active' ? 'Active / Responded' : tab === 'reported' ? 'Reported' : 'Needs Review'}
+                  {tab === 'analytics' && <BarChart2 size={14} />}
+                  {tab === 'all' ? 'All Pending' : tab === 'active' ? 'Active / Responded' : tab === 'reported' ? 'Reported' : tab === 'needs_review' ? 'Needs Review' : 'Analytics'}
                 </button>
               ))}
             </div>
 
-            {loading ? (
+            {activeTab === 'analytics' ? (
+              <div className="flex flex-col gap-6">
+                {analyticsLoading ? (
+                  <div className="flex justify-center p-12"><Loader2 size={32} className="animate-spin text-primary" /></div>
+                ) : !analyticsData ? (
+                  <div className="text-center p-12">
+                    <button onClick={fetchAnalytics} className="bg-primary text-on-primary px-6 py-3 rounded-full font-semibold hover:opacity-90">Load Analytics</button>
+                  </div>
+                ) : (
+                  <>
+                    {/* Stat Cards */}
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                      {[
+                        { label: 'Page Visits', value: analyticsData.totals.visits, icon: <Eye size={20} />, color: 'bg-blue-50 text-blue-700' },
+                        { label: 'Unique Sessions', value: analyticsData.uniqueSessions, icon: <Users size={20} />, color: 'bg-purple-50 text-purple-700' },
+                        { label: 'Posts Created', value: analyticsData.totals.requests_created, icon: <PlusCircle size={20} />, color: 'bg-green-50 text-green-700' },
+                        { label: 'Offers Made', value: analyticsData.totals.offers_made, icon: <HeartHandshake size={20} />, color: 'bg-emerald-50 text-emerald-700' },
+                        { label: 'Shares', value: analyticsData.totals.shares, icon: <Share2 size={20} />, color: 'bg-indigo-50 text-indigo-700' },
+                        { label: 'Reports', value: analyticsData.totals.reports_filed, icon: <Flag size={20} />, color: 'bg-red-50 text-red-700' },
+                        { label: 'Resolved', value: analyticsData.totals.requests_resolved, icon: <Star size={20} />, color: 'bg-yellow-50 text-yellow-700' },
+                        { label: 'Request Views', value: analyticsData.totals.request_views, icon: <BarChart2 size={20} />, color: 'bg-orange-50 text-orange-700' },
+                      ].map(({ label, value, icon, color }) => (
+                        <div key={label} className="bg-surface-container-lowest border border-outline-variant rounded-xl p-5 flex flex-col gap-3">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${color}`}>{icon}</div>
+                          <div>
+                            <p className="text-2xl font-bold text-on-surface">{value}</p>
+                            <p className="text-sm text-on-surface-variant">{label}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Recent Events */}
+                    <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-6 flex flex-col gap-4">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-semibold text-on-surface">Recent Events</h3>
+                        <button onClick={fetchAnalytics} className="text-sm text-primary font-medium hover:underline">↻ Refresh</button>
+                      </div>
+                      <div className="flex flex-col divide-y divide-outline-variant/50">
+                        {analyticsData.recentEvents.length === 0 ? (
+                          <p className="text-sm text-on-surface-variant py-4 text-center">No events recorded yet.</p>
+                        ) : analyticsData.recentEvents.map(e => (
+                          <div key={e.id} className="py-3 flex items-center justify-between gap-4">
+                            <div className="flex items-center gap-3">
+                              <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                                e.eventType === 'visit' ? 'bg-blue-100 text-blue-700' :
+                                e.eventType === 'request_created' ? 'bg-green-100 text-green-700' :
+                                e.eventType === 'offer_made' ? 'bg-emerald-100 text-emerald-700' :
+                                e.eventType === 'report_filed' ? 'bg-red-100 text-red-700' :
+                                e.eventType === 'request_resolved' ? 'bg-yellow-100 text-yellow-700' :
+                                'bg-surface-container text-on-surface-variant'
+                              }`}>{e.eventType.replace(/_/g, ' ')}</span>
+                              {e.requestId && (
+                                <Link href={`/request/${e.requestId}`} target="_blank" className="text-xs text-primary hover:underline font-mono">{e.requestId}</Link>
+                              )}
+                            </div>
+                            <span className="text-xs text-on-surface-variant shrink-0">{formatRelativeTime(new Date(e.createdAt))}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </>
+                )}
+              </div>
+            ) : loading ? (
               <div className="flex justify-center p-12"><Loader2 size={32} className="animate-spin text-primary" /></div>
             ) : filteredRequests.length === 0 ? (
               <div className="text-center p-12 bg-surface-container-lowest border border-outline-variant rounded-xl">
