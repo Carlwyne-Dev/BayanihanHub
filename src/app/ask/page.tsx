@@ -2,7 +2,8 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Sparkles, Loader2, AlertCircle, Send, X, Info, ArrowLeft, HeartHandshake, HandHeart } from 'lucide-react';
+import { ArrowLeft, Send, Sparkles, Loader2, AlertCircle, X, Image as ImageIcon, Info, HeartHandshake, HandHeart } from 'lucide-react';
+import Tesseract from 'tesseract.js';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TopNav } from '@/components/TopNav';
 import { Footer } from '@/components/Footer';
@@ -42,6 +43,7 @@ function AskContent() {
   const [form, setForm] = useState<FormData>({ ...INITIAL, type: initialType });
   const [aiText, setAiText] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
+  const [ocrLoading, setOcrLoading] = useState(false);
   const [aiError, setAiError] = useState('');
   const [aiFallback, setAiFallback] = useState(false);
   const [showAiPanel, setShowAiPanel] = useState(true);
@@ -132,6 +134,32 @@ function AskContent() {
     }
   }
 
+  async function handleFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setOcrLoading(true);
+    setAiError('');
+    try {
+      const result = await Tesseract.recognize(file, 'eng', {
+        logger: m => console.log(m)
+      });
+      const text = result.data.text;
+      if (text.trim().length < 5) {
+        setAiError('Could not find enough text in that image. Please paste it manually.');
+      } else {
+        setAiText(text);
+      }
+    } catch (err) {
+      console.error(err);
+      setAiError('Failed to read the image. Please try pasting text instead.');
+    } finally {
+      setOcrLoading(false);
+      // Reset input so the same file can be selected again
+      if (e.target) e.target.value = '';
+    }
+  }
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError('');
@@ -204,7 +232,7 @@ function AskContent() {
   };
 
   return (
-    <div className="flex-1 flex flex-col w-full bg-background min-h-screen relative pb-28 md:pb-0">
+    <div className="flex-1 flex flex-col w-full bg-background min-h-screen relative pb-44 md:pb-0">
       
       {/* Toast Notification */}
       {toastMsg && (
@@ -282,36 +310,60 @@ function AskContent() {
         {showAiPanel && (
           <motion.div initial={{ opacity: 0, height: 0, y: -10 }} animate={{ opacity: 1, height: 'auto', y: 0 }} exit={{ opacity: 0, height: 0, overflow: 'hidden' }} className="bg-surface border border-outline-variant rounded-xl p-6 flex flex-col gap-4">
             <div className="flex justify-between items-center">
-              <h4 className="text-base font-semibold text-on-surface">Paste your message</h4>
+              <h4 className="text-base font-semibold text-on-surface">Paste text or upload a screenshot</h4>
               <button onClick={() => setShowAiPanel(false)}><X size={18} className="text-outline" /></button>
             </div>
-            <textarea
-              className={inputClass}
-              rows={4}
-              placeholder="e.g. 'Hi neighbors, an elderly couple on Rizal St needs help clearing debris tomorrow morning.'"
-              value={aiText}
-              onChange={e => setAiText(e.target.value)}
-              style={{ resize: 'none' }}
-            />
+            
+            <div className="relative">
+              <textarea
+                className={inputClass}
+                rows={4}
+                placeholder="e.g. 'Hi neighbors, an elderly couple on Rizal St needs help clearing debris tomorrow morning.'"
+                value={aiText}
+                onChange={e => setAiText(e.target.value)}
+                style={{ resize: 'none' }}
+                disabled={ocrLoading}
+              />
+              {ocrLoading && (
+                <div className="absolute inset-0 bg-surface/50 backdrop-blur-sm flex items-center justify-center rounded-lg">
+                  <div className="flex items-center gap-2 text-primary font-semibold">
+                    <Loader2 size={20} className="animate-spin" />
+                    Reading screenshot...
+                  </div>
+                </div>
+              )}
+            </div>
             {aiError && (
               <div className={`flex items-center gap-2 text-sm ${aiFallback ? 'text-on-surface-variant' : 'text-error'}`}>
                 <AlertCircle size={14} /> {aiError}
               </div>
             )}
-            <div className="flex gap-3 justify-end">
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                <button type="button" onClick={() => { setShowAiPanel(false); set('type', form.type === 'ASK' ? 'OFFER' : 'ASK'); }} className="px-6 py-4 text-sm text-on-surface-variant hover:text-on-surface border border-outline-variant rounded-lg transition-colors w-full h-full">
-                  Fill manually instead
-                </button>
-              </motion.div>
-              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+            <div className="flex flex-col sm:flex-row gap-3 justify-end">
+              <div className="flex-1">
+                <input 
+                  type="file" 
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                  id="screenshot-upload"
+                  disabled={ocrLoading || aiLoading}
+                />
+                <label 
+                  htmlFor="screenshot-upload"
+                  className="flex items-center justify-center gap-2 px-6 py-4 text-base font-medium text-on-surface hover:bg-surface-container-low border border-outline-variant rounded-xl transition-colors w-full cursor-pointer h-full"
+                >
+                  <ImageIcon size={18} />
+                  Upload Screenshot
+                </label>
+              </div>
+              <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="flex-1">
                 <button
                   type="button"
                   onClick={handleAiExtract}
                   disabled={aiLoading}
-                  className="bg-primary text-on-primary text-sm px-6 py-4 rounded-full hover:opacity-90 transition-opacity flex items-center gap-2 font-medium w-full h-full"
+                  className="bg-primary text-on-primary text-base px-6 py-4 rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2 font-medium w-full h-full"
                 >
-                  {aiLoading ? <Loader2 size={16} className="animate-spin" /> : <Sparkles size={16} />}
+                  {aiLoading ? <Loader2 size={18} className="animate-spin" /> : <Sparkles size={18} />}
                   {aiLoading ? 'Extracting…' : 'Extract Info'}
                 </button>
               </motion.div>
@@ -488,24 +540,32 @@ function AskContent() {
                   className="bg-primary text-on-primary text-base font-medium px-12 py-4 rounded-full hover:opacity-90 transition-opacity shadow-sm flex items-center gap-2"
                 >
                   {submitting ? <Loader2 size={18} className="animate-spin" /> : null}
-                  {submitting ? 'Posting…' : <>Review & Post <Send size={18} /></>}
+                  {submitting ? 'Posting…' : <>Post <Send size={18} /></>}
                 </button>
               </motion.div>
             </div>
 
             {/* Mobile Sticky Action Bar — only visible when valid or scrolled to bottom */}
-            {showFloatingButton && (
-              <div className="md:hidden fixed bottom-[84px] left-4 right-4 z-[9998] animate-in fade-in slide-in-from-bottom-2">
-                <button
-                  type="submit"
-                  disabled={submitting}
-                  className="w-full bg-primary text-on-primary text-base font-bold py-4 rounded-2xl flex justify-center items-center gap-2 shadow-lg transition-all active:scale-[0.98]"
+            <AnimatePresence>
+              {showFloatingButton && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 15 }} 
+                  animate={{ opacity: 1, y: 0 }} 
+                  exit={{ opacity: 0, y: 15 }}
+                  transition={{ duration: 0.2 }}
+                  className="md:hidden fixed bottom-[84px] left-4 right-4 z-[9998]"
                 >
-                  {submitting ? <Loader2 size={20} className="animate-spin" /> : null}
-                  {submitting ? 'Posting…' : <>Review & Post <Send size={20} /></>}
-                </button>
-              </div>
-            )}
+                  <button
+                    type="submit"
+                    disabled={submitting}
+                    className="w-full bg-primary text-on-primary text-base font-bold py-4 rounded-2xl flex justify-center items-center gap-2 shadow-lg transition-all active:scale-[0.98]"
+                  >
+                    {submitting ? <Loader2 size={20} className="animate-spin" /> : null}
+                    {submitting ? 'Posting…' : <>Post <Send size={20} /></>}
+                  </button>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </form>
         </motion.div>
       </main>
