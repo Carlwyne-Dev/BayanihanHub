@@ -1,54 +1,37 @@
 # BayanihanHub — Community Help, Connected
 
-BayanihanHub is a real-time disaster relief and community help platform built for the DoGoodie Impact Hackathon. It centralizes unstructured help requests and offers (often lost in social media feeds), structures them using AI, and connects people faster than ever before.
+> A real-time disaster relief and community help platform built for the **DoGoodie Impact Hackathon**.
+
+BayanihanHub centralizes unstructured help requests and offers (often lost in social media feeds), structures them using AI, and connects people faster than ever before — embodying the Filipino spirit of **Bayanihan**.
+
+---
 
 ## 🚀 Features
 
-- **Public Feed (Map & List):** Users can view active requests and offers in their area, toggle between "Ask" and "Offer" feeds, and see everything on an interactive map.
-- **AI-Powered Moderation:** 
-  - **Spam Filtering:** An AI judge (Groq LLaMA 3.3) analyzes offers to ensure they are contextual and valid before notifying the requester.
-  - **Admin AI Assistant:** Admins can ask the AI moderator for 1-sentence summaries and actionable advice on whether to approve, reject, or resolve a request.
-- **Trust & Verification System:** Community signals like "Vouches", "Reports", and "Helper Responded" help establish trust. Admins have a dedicated dashboard to manually verify requests, stamping them with a blue "Verified by Admin" shield.
-- **Rate Limiting & Security:** All public endpoints (creating requests, offering help, reporting) and admin endpoints are heavily rate-limited using Upstash Redis to prevent spam and brute-force attacks.
+- **Public Feed & Map** — Real-time list and interactive map of active community requests and offers, filterable by category, urgency, and location.
+- **Post a Request or Offer** — Anyone can ask for help or offer help in seconds, with AI structuring and spam filtering on submit.
+- **AI-Powered Moderation** — Groq LLaMA 3.3 checks every offer message for spam/gibberish before it reaches the requester. An AI assistant also helps the admin make fast moderation decisions.
+- **Trust & Verification System** — Community signals (Vouches, Reports, "Still Needed") and an admin-verified blue shield badge help surface credible requests.
+- **Admin Dashboard** — Full moderation queue with tabs, community signals, AI advice, and confirmation modals for every action.
+- **Rate Limiting & Security** — All endpoints are protected with Upstash Redis rate limiting (per-IP + per-email) to prevent spam and abuse.
+- **Toast Notifications** — Real-time feedback across the whole app, styled to match the aesthetic.
+
+---
 
 ## 🛠 Tech Stack
 
-- **Framework:** Next.js 15 (App Router)
-- **Styling:** Tailwind CSS (v4) & Framer Motion for micro-animations
-- **Database:** Neon Serverless Postgres with Drizzle ORM
-- **AI:** Groq SDK (LLaMA 3.3) for lightning-fast inference
-- **Caching & Rate Limiting:** Upstash Redis
-- **Maps:** Leaflet & React-Leaflet
+| Layer | Technology |
+|---|---|
+| Framework | Next.js 16 (App Router) |
+| Styling | Tailwind CSS v4 + Framer Motion |
+| Database | Neon Serverless Postgres + Drizzle ORM |
+| AI | Groq SDK (LLaMA 3.3-70b) |
+| Rate Limiting | Upstash Redis |
+| Maps | Leaflet + React-Leaflet |
+| Notifications | react-hot-toast |
 
-## 🏃‍♂️ Getting Started
-
-1. **Install dependencies:**
-   ```bash
-   npm install
-   ```
-
-2. **Set up your `.env.local` file:**
-   You will need credentials for Neon (Database), Upstash (Redis), and Groq (AI).
-   ```env
-   DATABASE_URL="postgresql://..."
-   UPSTASH_REDIS_REST_URL="https://..."
-   UPSTASH_REDIS_REST_TOKEN="..."
-   GROQ_API_KEY="gsk_..."
-   ADMIN_PASSWORD="your_secure_password"
-   ```
-
-3. **Run the development server:**
-   ```bash
-   npm run dev
-   ```
-
-4. **Open [http://localhost:3000](http://localhost:3000)** to view it in your browser.
-
-## 🛡️ Admin Dashboard
-Access the moderation queue at `/admin`. Enter the `ADMIN_PASSWORD` you set in your `.env.local`. 
-- **Needs Review:** View new requests and reports.
-- **AI Judge:** Click "Ask AI Moderator" on any request to get instant context and moderation advice.
-- **Verify:** Approving a request instantly adds the blue Verified Shield for all users to see.
+---
 
 ## 📜 License
-Built for the DoGoodie Impact Hack. Open-source.
+
+This project is **not open for cloning or reuse**. All rights reserved © 2026 Carlwyne. Built for the DoGoodie Impact Hack.
