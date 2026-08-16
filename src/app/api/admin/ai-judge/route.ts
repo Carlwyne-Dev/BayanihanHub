@@ -6,7 +6,7 @@ import Groq from 'groq-sdk';
 import { checkRateLimit } from '@/lib/utils';
 
 const ADMIN_PASS = process.env.ADMIN_PASSWORD || 'dogoodie';
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || 'dummy_key_for_build' });
 
 export async function POST(req: NextRequest) {
   const ip = req.headers.get('x-forwarded-for') || '127.0.0.1';

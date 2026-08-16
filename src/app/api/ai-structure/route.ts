@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server';
 import Groq from 'groq-sdk';
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || 'dummy_key_for_build' });
 
 const SYSTEM_PROMPT = `You are a helpful assistant for BayanihanHub, a community help platform.
 Your task is to extract structured information from a raw social media post or message about someone needing or offering help.

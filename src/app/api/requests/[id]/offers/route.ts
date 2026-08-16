@@ -5,7 +5,7 @@ import { eq, sql } from 'drizzle-orm';
 import { generateId, hashRef, checkRateLimit } from '@/lib/utils';
 import Groq from 'groq-sdk';
 
-const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
+const groq = new Groq({ apiKey: process.env.GROQ_API_KEY || 'dummy_key_for_build' });
 
 type Params = { params: Promise<{ id: string }> };
 
