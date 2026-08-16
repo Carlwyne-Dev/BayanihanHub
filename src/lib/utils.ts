@@ -53,7 +53,7 @@ export function getExpiryHours(urgency: Urgency): number {
 
 // ─── LOCATION JITTER (for sensitive categories) ───────────────────────────────
 
-const SENSITIVE_CATEGORIES = new Set(['health', 'pets']);
+const SENSITIVE_CATEGORIES = new Set(['health', 'shelter', 'pets']);
 const JITTER_KM = 0.5; // ~500m radius jitter
 
 export function jitterCoords(
@@ -86,6 +86,7 @@ export const categoryOptions: Array<{ value: Category; label: string }> = [
   { value: 'transport',   label: 'Rides & Transport' },
   { value: 'food',        label: 'Food & Groceries' },
   { value: 'health',      label: 'Health & Wellness' },
+  { value: 'shelter',     label: 'Housing & Shelter' },
   { value: 'pets',        label: 'Pets & Animals' },
   { value: 'information', label: 'Questions & Info' },
   { value: 'other',       label: 'Other' },

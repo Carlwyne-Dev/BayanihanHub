@@ -13,6 +13,7 @@ const categoryConfig: Record<Category, { label: string; icon: React.ReactNode; c
   transport:   { label: 'Rides & Transport', icon: <Car size={14} />,           color: '#5c4a1a' },
   food:        { label: 'Food & Groceries',  icon: <Utensils size={14} />,      color: '#7a5c00' },
   health:      { label: 'Health & Wellness', icon: <Heart size={14} />,         color: '#ba1a1a' },
+  shelter:     { label: 'Housing & Shelter', icon: <Home size={14} />,          color: '#3a7a5c' },
   pets:        { label: 'Pets & Animals',    icon: <PawPrint size={14} />,      color: '#4a7a2a' },
   information: { label: 'Questions & Info',  icon: <Info size={14} />,          color: '#1a5c4a' },
   other:       { label: 'Other',             icon: <MoreHorizontal size={14} />, color: '#5f5e59' },

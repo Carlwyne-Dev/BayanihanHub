@@ -2,7 +2,7 @@ import { pgTable, text, integer, boolean, timestamp, real } from 'drizzle-orm/pg
 
 // ─── ENUMS (stored as text with TS union types) ──────────────────────────────
 
-export type Category = 'items' | 'services' | 'pets' | 'transport' | 'food' | 'health' | 'information' | 'other';
+export type Category = 'items' | 'services' | 'pets' | 'transport' | 'food' | 'health' | 'shelter' | 'information' | 'other';
 export type RequestType = 'ASK' | 'OFFER';
 export type Urgency = 'low' | 'normal' | 'urgent';
 export type SourcePlatform = 'facebook' | 'tiktok' | 'instagram' | 'x' | 'other' | 'none';
