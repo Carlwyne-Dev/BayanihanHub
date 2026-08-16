@@ -28,7 +28,28 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   other: <MoreHorizontal size={14} color="white" />,
 };
 
-function getMarkerIcon(category: string, isUrgent: boolean, type: 'ASK' | 'OFFER') {
+// Inject keyframes once into <head>
+const KEYFRAMES = `
+  @keyframes markerPopIn {
+    0%   { opacity: 0; transform: translate(-50%, -50%) scale(0.3); }
+    60%  { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+    80%  { transform: translate(-50%, -50%) scale(0.9); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+  }
+  @keyframes markerPopOut {
+    0%   { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -50%) scale(0.2); }
+  }
+`;
+
+if (typeof document !== 'undefined' && !document.getElementById('marker-keyframes')) {
+  const style = document.createElement('style');
+  style.id = 'marker-keyframes';
+  style.textContent = KEYFRAMES;
+  document.head.appendChild(style);
+}
+
+function getMarkerIcon(category: string, isUrgent: boolean, type: 'ASK' | 'OFFER', delay = 0) {
   const bg = isUrgent ? URGENCY_COLORS.urgent : getCategoryColor(category as any);
   const iconNode = isUrgent ? <AlertTriangle size={18} color="white" /> : (CATEGORY_ICONS[category] || CATEGORY_ICONS.other);
   const size = isUrgent ? 36 : 28;
@@ -48,6 +69,9 @@ function getMarkerIcon(category: string, isUrgent: boolean, type: 'ASK' | 'OFFER
       border: '2px solid white',
       boxShadow: '0 3px 6px rgba(0,0,0,0.3)',
       transform: 'translate(-50%, -50%)',
+      animation: `markerPopIn 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) ${delay}ms both`,
+      cursor: 'pointer',
+      transition: 'box-shadow 0.2s ease, filter 0.2s ease',
     }}>
       {iconNode}
     </div>
@@ -55,7 +79,7 @@ function getMarkerIcon(category: string, isUrgent: boolean, type: 'ASK' | 'OFFER
   
   return L.divIcon({
     html,
-    className: '', // prevent default leaflet styles
+    className: 'leaflet-marker-animated', // prevent default leaflet styles
     iconSize: [0, 0], // handled by CSS transform
     popupAnchor: [0, -size / 2],
   });
@@ -67,6 +91,8 @@ interface MapViewProps {
 
 export default function MapView({ filter }: MapViewProps) {
   const [requests, setRequests] = useState<Request[]>([]);
+  const [visibleRequests, setVisibleRequests] = useState<Request[]>([]);
+  const [filterKey, setFilterKey] = useState(0);
   const [userLoc, setUserLoc] = useState<[number, number] | null>(null);
 
   useEffect(() => {
@@ -78,19 +104,32 @@ export default function MapView({ filter }: MapViewProps) {
   }, []);
 
   useEffect(() => {
+    // Step 1: fade out current markers instantly by clearing them
+    setVisibleRequests([]);
+
     const params = new URLSearchParams();
     if (filter !== 'all' && filter !== 'urgent') params.set('category', filter);
     if (filter === 'urgent') params.set('urgency', 'urgent');
+
     fetch(`/api/requests?${params}&limit=50`)
       .then(r => r.json())
-      .then(j => setRequests((j.data ?? []).filter((r: Request) => r.locationLat && r.locationLng)));
+      .then(j => {
+        const newRequests = (j.data ?? []).filter((r: Request) => r.locationLat && r.locationLng);
+        setRequests(newRequests);
+        // Step 2: bump the key so markers remount with fresh animation
+        setFilterKey(k => k + 1);
+        // Step 3: show new markers after a tiny gap (enough for old ones to clear)
+        setTimeout(() => setVisibleRequests(newRequests), 50);
+      });
   }, [filter]);
 
   return (
     <>
     <style>{`
-      .leaflet-marker-icon > div { transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-      .leaflet-marker-icon > div:hover { transform: translate(-50%, -50%) scale(1.15) !important; box-shadow: 0 6px 12px rgba(0,0,0,0.4) !important; z-index: 1000 !important; }
+      .leaflet-marker-animated > div:hover {
+        filter: brightness(1.15);
+        box-shadow: 0 6px 16px rgba(0,0,0,0.45) !important;
+      }
     `}</style>
     <MapContainer
       center={[14.5995, 120.9842]} // Manila default
@@ -103,11 +142,11 @@ export default function MapView({ filter }: MapViewProps) {
         url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
         attribution='&copy; <a href="https://carto.com/">CARTO</a>'
       />
-      {requests.map(r => (
+      {visibleRequests.map((r, i) => (
         <Marker
-          key={r.id}
+          key={`${filterKey}-${r.id}`}
           position={[r.locationLat!, r.locationLng!]}
-          icon={getMarkerIcon(r.category, r.urgency === 'urgent', r.type)}
+          icon={getMarkerIcon(r.category, r.urgency === 'urgent', r.type, i * 30)}
         >
           <Popup>
             <div className="font-sans min-w-[220px]">
@@ -138,3 +177,4 @@ function MapUpdater({ loc }: { loc: [number, number] | null }) {
   }, [loc, map]);
   return null;
 }
+
