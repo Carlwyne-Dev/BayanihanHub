@@ -16,12 +16,15 @@ const MapView = dynamic<MapViewProps>(() => import('../../components/MapView'), 
 )});
 
 const FILTERS = [
-  { key: 'all',     label: 'All Requests' },
-  { key: 'urgent',  label: 'Urgent' },
-  { key: 'food',    label: 'Food & Water' },
-  { key: 'health',  label: 'Medical' },
-  { key: 'shelter', label: 'Shelter' },
-  { key: 'other',   label: 'Other' },
+  { key: 'all',       label: 'All Requests' },
+  { key: 'urgent',    label: 'Urgent' },
+  { key: 'items',     label: 'Items' },
+  { key: 'services',  label: 'Services' },
+  { key: 'food',      label: 'Food' },
+  { key: 'health',    label: 'Health' },
+  { key: 'shelter',   label: 'Shelter' },
+  { key: 'pets',      label: 'Pets' },
+  { key: 'other',     label: 'Other' },
 ];
 
 export default function MapPage() {

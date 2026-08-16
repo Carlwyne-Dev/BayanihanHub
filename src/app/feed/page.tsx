@@ -28,11 +28,13 @@ function formatDist(km: number) {
 
 const CATEGORIES = [
   { key: 'all',         label: 'All Requests' },
-  { key: 'supplies',    label: 'Supplies' },
-  { key: 'health',      label: 'Medical' },
+  { key: 'items',       label: 'Items' },
+  { key: 'services',    label: 'Services' },
   { key: 'transport',   label: 'Transport' },
-  { key: 'shelter',     label: 'Shelter' },
   { key: 'food',        label: 'Food' },
+  { key: 'health',      label: 'Health' },
+  { key: 'shelter',     label: 'Shelter' },
+  { key: 'pets',        label: 'Pets' },
   { key: 'information', label: 'Info' },
   { key: 'other',       label: 'Other' },
 ];
