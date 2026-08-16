@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
     const [request] = await db.select().from(requests).where(eq(requests.id, id));
     if (!request) return NextResponse.json({ error: 'Request not found' }, { status: 404 });
 
-    const prompt = `You are an AI moderator assistant for a disaster relief platform (Bayanihan Hub). 
+    const prompt = `You are an AI moderator assistant for a local community help platform (Bayanihan Hub). 
 Please analyze this request and give a brief 2-sentence recommendation on what the human admin should do (Approve, Resolve, or Expire/Hide).
 
 Details:

@@ -31,7 +31,7 @@ export default function TermsPage() {
         <Section icon={FileText} title="What BayanihanHub Is">
           <p>
             BayanihanHub is a community coordination platform designed to connect people in need with people who
-            can help during disasters, calamities, and everyday community hardships in the Philippines.
+            can help with everyday community needs and hardships in the Philippines.
           </p>
           <p>
             BayanihanHub is <strong>not</strong> an emergency service, a government agency, a medical platform, or

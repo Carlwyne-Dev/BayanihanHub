@@ -68,7 +68,7 @@ export default function LandingPage() {
           </motion.h1>
           
           <motion.p variants={fadeInUp} className="text-lg md:text-xl text-on-surface-variant max-w-xl mb-10 leading-relaxed">
-            When crisis strikes, every second counts. BayanihanHub is a crowdsourced platform connecting those who need immediate help with locals who can provide it.
+            BayanihanHub is a community platform connecting locals who need a hand—from a spare school supply to a blood donor—with neighbors who can help.
           </motion.p>
           
           <motion.div variants={fadeInUp} className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
@@ -117,7 +117,7 @@ export default function LandingPage() {
           >
             <h2 className="text-3xl md:text-4xl font-bold text-on-surface mb-4">How It Works</h2>
             <p className="text-on-surface-variant max-w-xl mx-auto">
-              We cut through the noise of social media so aid organizations and volunteers can find and help those in distress immediately.
+              We cut through the noise of social media so you can easily find and help neighbors nearby with everyday community needs.
             </p>
           </motion.div>
 
@@ -146,7 +146,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-xl font-semibold text-on-surface mb-3">AI Data Extraction</h3>
               <p className="text-on-surface-variant leading-relaxed">
-                Paste a chaotic social media post, and our AI automatically extracts the location, urgency, and category. Less typing, faster response.
+                Paste a community request, and our AI automatically extracts the location, urgency, and category. Less typing, faster connection.
               </p>
             </motion.div>
             
@@ -157,7 +157,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-xl font-semibold text-on-surface mb-3">Community Vouching</h3>
               <p className="text-on-surface-variant leading-relaxed">
-                To combat fake reports, locals can "vouch" for requests to confirm they are legitimate, helping prioritize critical rescue ops.
+                To build trust, locals can "vouch" for requests to confirm they are legitimate, helping the community prioritize real needs.
               </p>
             </motion.div>
           </motion.div>
