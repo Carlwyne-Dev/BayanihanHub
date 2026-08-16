@@ -2,7 +2,7 @@
 
 import { useState, useEffect, Suspense } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
-import { ArrowLeft, MapPin, Clock, ExternalLink, Share2, ShieldAlert, HeartHandshake, User, CheckCircle2, RefreshCw, Loader2, AlertCircle, X, Flag, Search, History, AlertTriangle, Package, Users, ShieldCheck, HandshakeIcon } from 'lucide-react';
+import { ArrowLeft, MapPin, Clock, ExternalLink, Share2, ShieldAlert, HeartHandshake, User, CheckCircle2, RefreshCw, Loader2, AlertCircle, X, Flag, Search, History, AlertTriangle, Package, Users, ShieldCheck, HandshakeIcon, Phone, MessageCircle } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -420,8 +420,9 @@ function RequestDetailContent() {
                         <p className="text-lg font-semibold text-on-surface">Here's how to reach them:</p>
                         <div className="bg-primary-fixed rounded-xl p-4 flex flex-col gap-2">
                           {offerResult.contactMethod.split(' | ').filter(Boolean).map((c, i) => (
-                            <div key={i} className="text-base font-semibold text-on-surface break-all">
-                              {c}
+                            <div key={i} className="text-base font-semibold text-on-surface break-all flex items-center gap-2">
+                              {i === 0 ? <Phone size={16} className="text-primary/70 shrink-0" /> : <MessageCircle size={16} className="text-primary/70 shrink-0" />}
+                              <span>{c}</span>
                             </div>
                           ))}
                         </div>
