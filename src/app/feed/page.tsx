@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { MapPin, Clock, ArrowRight, HeartHandshake, Navigation, Loader2, AlertTriangle, ChevronDown, HandHeart, Share2, PlusCircle, ShieldCheck } from 'lucide-react';
@@ -54,7 +54,7 @@ const STATUS_STYLE: Record<string, { bg: string; text: string }> = {
   needs_review: { bg: 'bg-surface-variant',      text: 'text-secondary' },
 };
 
-export default function FeedPage() {
+function FeedContent() {
   const searchParams = useSearchParams();
   const queryParam = searchParams?.get('q') || '';
 
@@ -425,5 +425,13 @@ export default function FeedPage() {
       {/* Footer */}
       <Footer />
     </div>
+  );
+}
+
+export default function FeedPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background flex flex-col pt-[72px] pb-24 items-center justify-center"><Loader2 className="animate-spin text-primary" size={32} /></div>}>
+      <FeedContent />
+    </Suspense>
   );
 }

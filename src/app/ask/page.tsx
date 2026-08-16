@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Sparkles, Loader2, AlertCircle, Send, X, Info, ArrowLeft, HeartHandshake, HandHeart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -33,7 +33,7 @@ const INITIAL: FormData = {
   submitterEmail: '', consentType: '',
 };
 
-export default function AskPage() {
+function AskContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const initialType = searchParams.get('type') === 'offer' ? 'OFFER' : 'ASK';
@@ -498,5 +498,13 @@ export default function AskPage() {
         <Footer />
       </div>
     </div>
+  );
+}
+
+export default function AskPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background flex flex-col pt-[72px] items-center justify-center"><Loader2 className="animate-spin text-primary" size={32} /></div>}>
+      <AskContent />
+    </Suspense>
   );
 }

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { Search, Bell, Settings, User, Heart, FileText, ChevronRight, X, Menu, Loader2, MapPin } from 'lucide-react';
@@ -13,7 +13,7 @@ const NAV_LINKS = [
   { href: '/ask',      label: 'Post Request', primary: true },
 ];
 
-export function TopNav() {
+function TopNavInner() {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -330,5 +330,13 @@ export function TopNav() {
         </div>
       </div>
     </header>
+  );
+}
+
+export function TopNav() {
+  return (
+    <Suspense fallback={<div className="h-[72px] bg-surface w-full border-b border-outline-variant" />}>
+      <TopNavInner />
+    </Suspense>
   );
 }

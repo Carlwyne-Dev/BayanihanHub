@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, MapPin, Clock, ExternalLink, Share2, ShieldAlert, HeartHandshake, User, CheckCircle2, RefreshCw, Loader2, AlertCircle, X, Flag, Search, History, AlertTriangle, Package, Users, ShieldCheck, HandshakeIcon } from 'lucide-react';
 import dynamic from 'next/dynamic';
@@ -23,7 +23,7 @@ const REPORT_REASONS = [
   { value: 'suspicious',    label: 'Looks suspicious' },
 ];
 
-export default function RequestDetailPage() {
+function RequestDetailContent() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -544,5 +544,13 @@ export default function RequestDetailPage() {
         </div>
       )}
     </div>
+  );
+}
+
+export default function RequestDetailPage() {
+  return (
+    <Suspense fallback={<div className="min-h-screen bg-background flex flex-col pt-[72px] items-center justify-center"><Loader2 className="animate-spin text-primary" size={32} /></div>}>
+      <RequestDetailContent />
+    </Suspense>
   );
 }
