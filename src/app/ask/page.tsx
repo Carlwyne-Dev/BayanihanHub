@@ -20,6 +20,7 @@ type FormData = {
   locationLat:   number | null;
   locationLng:   number | null;
   contactMethod: string;
+  socialHandle:  string;
   sourcePlatform:string;
   sourceUrl:     string;
   submitterEmail:string;
@@ -29,7 +30,7 @@ type FormData = {
 const INITIAL: FormData = {
   type: 'ASK', title: '', description: '', category: '', urgency: 'normal',
   locationLabel: '', locationLat: null, locationLng: null,
-  contactMethod: '', sourcePlatform: 'none', sourceUrl: '',
+  contactMethod: '', socialHandle: '', sourcePlatform: 'none', sourceUrl: '',
   submitterEmail: '', consentType: '',
 };
 
@@ -146,6 +147,7 @@ function AskContent() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           ...form,
+          contactMethod: [form.contactMethod, form.socialHandle].filter(Boolean).join(' | '),
           lat: form.locationLat,
           lng: form.locationLng,
         }),
@@ -405,6 +407,20 @@ function AskContent() {
                   value={form.contactMethod}
                   onChange={e => set('contactMethod', e.target.value)}
                   required
+                />
+              </div>
+              {/* Social media handle — optional */}
+              <div>
+                <label className={labelClass} htmlFor="social-handle">
+                  Social media handle <span className="text-outline font-normal text-xs ml-1">(optional)</span>
+                </label>
+                <p className="text-xs text-outline mb-2">Your Facebook, TikTok, or Instagram handle so helpers can reach you there if they prefer.</p>
+                <input
+                  id="social-handle"
+                  className={inputClass}
+                  placeholder="e.g. @juandelacruz on Facebook"
+                  value={form.socialHandle}
+                  onChange={e => set('socialHandle', e.target.value)}
                 />
               </div>
               <div>
