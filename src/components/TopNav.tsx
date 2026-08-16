@@ -142,18 +142,7 @@ function TopNavInner() {
   };
 
   return (
-    <header className="sticky top-0 w-full z-50">
-      {/* Kantata-style Fading blur background */}
-      <div 
-        className="absolute inset-0 -bottom-8 pointer-events-none z-0"
-        style={{
-          background: 'linear-gradient(to bottom, rgba(252, 249, 246, 0.9) 40%, rgba(252, 249, 246, 0) 100%)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
-          maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
-          WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
-        }}
-      />
+    <header className="sticky top-0 w-full z-50 bg-background/80 backdrop-blur-md border-b border-outline-variant/30">
       <div className="flex justify-between items-center h-16 md:h-20 px-4 md:px-12 w-full max-w-screen-2xl mx-auto relative z-10">
 
         <div className="flex items-center justify-center absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0">
