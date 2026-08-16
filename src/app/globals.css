@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-background: #fcf9f6;
+  --color-surface: #fcf9f6;
+  --color-surface-dim: #ddd9d6;
+  --color-surface-bright: #fcf9f6;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #f7f3f0;
+  --color-surface-container: #f1edea;
+  --color-surface-container-high: #ebe7e4;
+  --color-surface-container-highest: #e5e2df;
+  --color-surface-variant: #e5e2df;
+
+  --color-on-surface: #1c1c1a;
+  --color-on-background: #1c1c1a;
+  --color-on-surface-variant: #464554;
+  --color-inverse-surface: #31302e;
+  --color-inverse-on-surface: #f4f0ed;
+
+  --color-outline: #777585;
+  --color-outline-variant: #c7c4d6;
+
+  --color-primary: #4441c4;
+  --color-on-primary: #ffffff;
+  --color-primary-container: #5d5cde;
+  --color-on-primary-container: #f1eeff;
+  --color-primary-fixed: #e2dfff;
+  --color-primary-fixed-dim: #c2c1ff;
+  --color-inverse-primary: #c2c1ff;
+
+  --color-secondary: #5f5e59;
+  --color-on-secondary: #ffffff;
+  --color-secondary-container: #e5e2db;
+  --color-on-secondary-container: #65645f;
+
+  --color-tertiary: #57554a;
+  --color-on-tertiary: #ffffff;
+  --color-tertiary-container: #706d62;
+  --color-on-tertiary-container: #f5f0e2;
+
+  --color-error: #ba1a1a;
+  --color-on-error: #ffffff;
+  --color-error-container: #ffdad6;
+  --color-on-error-container: #93000a;
+
+  --font-sans: "Be Vietnam Pro", system-ui, -apple-system, sans-serif;
+
+  --radius-sm: 4px;
+  --radius: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
+}
+
+/* ─── Skeleton shimmer ──────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.skeleton {
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    #e8e3d5 25%,
+    #f2ede6 50%,
+    #e8e3d5 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+/* ─── Custom Scrollbar ────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-outline-variant);
+  border-radius: 9999px;
+  border: 2px solid var(--color-background);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-outline);
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-outline-variant) var(--color-background);
+}
