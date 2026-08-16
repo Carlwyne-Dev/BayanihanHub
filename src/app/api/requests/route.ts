@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic'
 import { NextRequest, NextResponse } from 'next/server';
 import { db, requests } from '@/lib/db';
 import { generateId, hashRef, jitterCoords, checkRateLimit } from '@/lib/utils';
