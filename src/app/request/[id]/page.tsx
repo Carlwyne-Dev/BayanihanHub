@@ -410,7 +410,9 @@ function RequestDetailContent() {
                         <div className="flex flex-col items-center gap-3 py-2">
                           <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center"><CheckCircle2 size={36} className="text-green-600" /></div>
                           <p className="text-lg font-bold text-on-surface">Thank you! 🎉</p>
-                          <p className="text-sm text-on-surface-variant">You've reported helping. This adds a trust badge to the post.</p>
+                          <p className="text-sm text-on-surface-variant">
+                            {request.type === 'ASK' ? "You've reported helping." : "You've reported receiving this."} This adds a trust badge to the post.
+                          </p>
                         </div>
                         <button onClick={() => { setShowContactResult(false); setHelpedConfirmed(false); }} className="text-sm text-secondary border border-outline-variant rounded-full py-2 hover:bg-surface-container transition-colors">Close</button>
                       </>
@@ -427,7 +429,7 @@ function RequestDetailContent() {
                           ))}
                         </div>
                         <button onClick={async () => { await handleVouch(); localStorage.setItem(`helped_${id}`, '1'); setHelpedConfirmed(true); }} disabled={vouchLoading || vouchDone} className="w-full bg-green-600 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-50">
-                          {vouchLoading ? <Loader2 size={18} className="animate-spin" /> : <CheckCircle2 size={18} />} {vouchDone ? 'Already confirmed — thank you!' : 'I helped with this!'}
+                          {vouchLoading ? <Loader2 size={18} className="animate-spin" /> : <CheckCircle2 size={18} />} {vouchDone ? 'Already confirmed — thank you!' : request.type === 'ASK' ? 'I helped with this!' : 'I received this!'}
                         </button>
                         <button onClick={() => setShowContactResult(false)} className="text-sm text-secondary border border-outline-variant rounded-full py-2 hover:bg-surface-container transition-colors">Not yet — close</button>
                       </>
@@ -436,18 +438,26 @@ function RequestDetailContent() {
                 ) : !hasOffered && isOwner === false && isActive ? (
                   <div className="flex flex-col gap-4 pb-4 border-b border-outline-variant">
                     <div>
-                      <h2 className="text-lg font-semibold text-on-background mb-1">Can you lend a hand?</h2>
-                      <p className="text-sm text-on-surface-variant">Join your neighbors and make a difference today.</p>
+                      <h2 className="text-lg font-semibold text-on-background mb-1">
+                        {request.type === 'ASK' ? 'Can you lend a hand?' : 'Do you need this?'}
+                      </h2>
+                      <p className="text-sm text-on-surface-variant">
+                        {request.type === 'ASK' 
+                          ? 'Join your neighbors and make a difference today.' 
+                          : 'Reach out to coordinate and claim this offer.'}
+                      </p>
                     </div>
                     <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
                       <button onClick={() => setShowOffer(true)} className="bg-primary text-on-primary text-lg font-semibold py-4 px-6 rounded-full w-full hover:opacity-90 transition-opacity flex justify-center items-center gap-2">
-                        <HandshakeIcon size={20} /> Offer Help
+                        <HandshakeIcon size={20} /> {request.type === 'ASK' ? 'Offer Help' : 'Request This'}
                       </button>
                     </motion.div>
                   </div>
                 ) : hasOffered && !showContactResult ? (
                   <div className="flex flex-col gap-3 pb-4 border-b border-outline-variant">
-                    <p className="text-sm text-center text-on-surface-variant">You've already offered to help with this request.</p>
+                    <p className="text-sm text-center text-on-surface-variant">
+                      {request.type === 'ASK' ? "You've already offered to help with this request." : "You've already requested this offer."}
+                    </p>
                     <button onClick={() => setShowContactResult(true)} className="text-sm text-primary border border-primary/30 rounded-full py-2 hover:bg-primary-fixed transition-colors font-medium">View contact info again</button>
                   </div>
                 ) : null}
@@ -489,11 +499,17 @@ function RequestDetailContent() {
         <div className="fixed inset-0 bg-black/50 z-50 flex items-end md:items-center justify-center p-4" onClick={() => setShowOffer(false)}>
           <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-surface-container-lowest rounded-2xl p-6 w-full max-w-md flex flex-col gap-4" onClick={e => e.stopPropagation()}>
             <div className="flex justify-between items-center">
-              <p className="text-lg font-semibold text-on-surface">How can you help?</p>
+              <p className="text-lg font-semibold text-on-surface">
+                {request.type === 'ASK' ? 'How can you help?' : 'Why do you need this?'}
+              </p>
               <button onClick={() => setShowOffer(false)} className="text-outline hover:text-on-surface"><X size={20} /></button>
             </div>
-            <p className="text-sm text-on-surface-variant">Write a brief message, then you'll see how to reach the requester.</p>
-            <textarea className={inputClass} rows={4} placeholder="e.g. I have a car and can drive them tomorrow morning…" value={offerMsg} onChange={e => setOfferMsg(e.target.value)} style={{ resize: 'none' }} />
+            <p className="text-sm text-on-surface-variant">
+              {request.type === 'ASK' 
+                ? "Write a brief message, then you'll see how to reach the requester." 
+                : "Write a brief message, then you'll see how to reach the person offering this."}
+            </p>
+            <textarea className={inputClass} rows={4} placeholder={request.type === 'ASK' ? "e.g. I have a car and can drive them tomorrow morning…" : "e.g. I have a family of 5 and we could really use this right now..."} value={offerMsg} onChange={e => setOfferMsg(e.target.value)} style={{ resize: 'none' }} />
             <input className={inputClass} placeholder="Your email or handle" value={offerEmail} onChange={e => setOfferEmail(e.target.value)} />
             <input className={inputClass} placeholder="Your Name (optional)" value={offerName} onChange={e => setOfferName(e.target.value)} />
             {offerError && <div className="flex items-center gap-2 text-error text-sm"><AlertCircle size={14} /> {offerError}</div>}
