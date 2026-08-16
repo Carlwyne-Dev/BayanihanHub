@@ -119,20 +119,32 @@ import { Redis } from '@upstash/redis';
 // ─── RATE LIMITING (Upstash Redis with in-memory fallback) ───────────────────
 
 let ratelimit: Ratelimit | null = null;
-if (process.env.UPSTASH_REDIS_REST_URL && process.env.UPSTASH_REDIS_REST_TOKEN) {
-  ratelimit = new Ratelimit({
-    redis: Redis.fromEnv(),
-    limiter: Ratelimit.slidingWindow(5, '1 h'),
-    analytics: true,
-  });
+
+function getRatelimit(): Ratelimit | null {
+  if (ratelimit) return ratelimit;
+  const url   = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (url && token && url.startsWith('https://')) {
+    try {
+      ratelimit = new Ratelimit({
+        redis: new Redis({ url, token }),
+        limiter: Ratelimit.slidingWindow(5, '1 h'),
+        analytics: true,
+      });
+    } catch {
+      ratelimit = null;
+    }
+  }
+  return ratelimit;
 }
 
 const rateLimitMap = new Map<string, number[]>();
 
 export async function checkRateLimit(key: string, maxRequests = 3, windowMs = 3600000): Promise<boolean> {
-  if (ratelimit) {
+  const rl = getRatelimit();
+  if (rl) {
     try {
-      const { success } = await ratelimit.limit(key);
+      const { success } = await rl.limit(key);
       return success;
     } catch (err) {
       console.warn('[RateLimit Error] Falling back to memory', err);
