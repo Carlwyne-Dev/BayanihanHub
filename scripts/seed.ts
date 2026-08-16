@@ -1,3 +1,4 @@
+/// <reference types="node" />
 /**
  * Seed script — realistic Filipino community demo data
  * Run with: npx tsx scripts/seed.ts

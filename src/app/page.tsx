@@ -37,35 +37,48 @@ export default function LandingPage() {
         initial={{ y: -20, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="absolute top-0 w-full z-50 px-6 py-6 md:px-12 flex justify-between items-center border-b border-outline-variant/30 bg-background/50 backdrop-blur-sm"
+        className="fixed top-0 left-0 right-0 z-50"
       >
-        <Link href="/" className="flex items-center gap-2">
-          <div style={{ width: 32, height: 32, borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
-            <Image
-              src="/logo.png"
-              alt="BayanihanHub logo"
-              width={32}
-              height={32}
-              className="w-full h-full object-cover scale-[1.15]"
-              priority
-            />
-          </div>
-          <span className="text-xl md:text-2xl font-bold tracking-tight text-primary" style={{ fontFamily: 'Be Vietnam Pro, sans-serif' }}>
-            BayanihanHub
-          </span>
-        </Link>
-        <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-          <Link 
-            href="/feed" 
-            className="text-sm font-semibold bg-primary text-on-primary px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity shadow-sm block"
-          >
-            Open App
+        <div 
+          className="absolute inset-0 -bottom-8 pointer-events-none z-0"
+          style={{
+            background: 'linear-gradient(to bottom, rgba(252, 249, 246, 0.9) 40%, rgba(252, 249, 246, 0) 100%)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+            maskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
+            WebkitMaskImage: 'linear-gradient(to bottom, black 60%, transparent 100%)',
+          }}
+        />
+
+        <div className="flex justify-between items-center h-16 md:h-20 px-6 md:px-12 w-full max-w-screen-2xl mx-auto relative z-10">
+          <Link href="/" className="flex items-center gap-2">
+            <div style={{ width: 32, height: 32, borderRadius: '50%', overflow: 'hidden', flexShrink: 0 }}>
+              <Image
+                src="/logo.png"
+                alt="BayanihanHub logo"
+                width={32}
+                height={32}
+                className="w-full h-full object-cover scale-[1.15]"
+                priority
+              />
+            </div>
+            <span className="text-xl md:text-2xl font-bold tracking-tight text-primary" style={{ fontFamily: 'Be Vietnam Pro, sans-serif' }}>
+              BayanihanHub
+            </span>
           </Link>
-        </motion.div>
+          <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+            <Link 
+              href="/feed" 
+              className="text-sm font-semibold bg-primary text-on-primary px-5 py-2.5 rounded-full hover:opacity-90 transition-opacity shadow-sm block"
+            >
+              Open App
+            </Link>
+          </motion.div>
+        </div>
       </motion.header>
 
       {/* ── Hero Section (Clean & Editorial) ── */}
-      <section className="relative pt-32 pb-20 md:pt-40 md:pb-28 px-6 md:px-12 flex flex-col md:flex-row items-center gap-12 max-w-screen-xl mx-auto w-full">
+      <section className="relative pt-16 pb-20 md:pt-20 md:pb-28 px-6 md:px-12 flex flex-col md:flex-row items-center gap-12 max-w-screen-xl mx-auto w-full">
         <motion.div 
           initial="hidden"
           animate="visible"
