@@ -418,7 +418,13 @@ function RequestDetailContent() {
                       <>
                         <CheckCircle2 size={40} className="text-green-600 mx-auto" />
                         <p className="text-lg font-semibold text-on-surface">Here's how to reach them:</p>
-                        <div className="bg-primary-fixed rounded-xl p-4 text-base font-semibold text-on-surface break-all">{offerResult.contactMethod}</div>
+                        <div className="bg-primary-fixed rounded-xl p-4 flex flex-col gap-2">
+                          {offerResult.contactMethod.split(' | ').filter(Boolean).map((c, i) => (
+                            <div key={i} className="text-base font-semibold text-on-surface break-all flex items-center gap-2">
+                              <span>{i === 0 ? '📞' : '💬'}</span> {c}
+                            </div>
+                          ))}
+                        </div>
                         <button onClick={async () => { await handleVouch(); localStorage.setItem(`helped_${id}`, '1'); setHelpedConfirmed(true); }} disabled={vouchLoading || vouchDone} className="w-full bg-green-600 text-white font-semibold py-3 rounded-xl flex items-center justify-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-50">
                           {vouchLoading ? <Loader2 size={18} className="animate-spin" /> : <CheckCircle2 size={18} />} {vouchDone ? 'Already confirmed — thank you!' : 'I helped with this!'}
                         </button>
