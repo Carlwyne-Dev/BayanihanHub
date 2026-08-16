@@ -3,7 +3,7 @@ import { drizzle } from 'drizzle-orm/neon-http';
 import * as schema from './schema';
 
 // Singleton pattern — reuse the same connection across hot-reloads in dev
-const sql = neon(process.env.DATABASE_URL!);
+const sql = neon(process.env.DATABASE_URL || 'postgres://placeholder_for_build@localhost/db');
 export const db = drizzle(sql, { schema });
 
 export * from './schema';
