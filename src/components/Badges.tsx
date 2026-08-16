@@ -2,19 +2,20 @@ import { Category, RequestType, Urgency, RequestStatus, TrustLabel } from '@/lib
 import {
   Heart, Utensils, Package, Home, Info, Car, MoreHorizontal,
   Clock, CheckCircle, AlertTriangle, Flag, Archive, RefreshCw, Shield,
-  HeartHandshake, HandHeart
+  HeartHandshake, HandHeart, PawPrint, Wrench
 } from 'lucide-react';
 
 // ─── CATEGORY ────────────────────────────────────────────────────────────────
 
 const categoryConfig: Record<Category, { label: string; icon: React.ReactNode; color: string }> = {
-  health:      { label: 'Health',      icon: <Heart size={14} />,         color: '#ba1a1a' },
-  food:        { label: 'Food',        icon: <Utensils size={14} />,      color: '#7a5c00' },
-  supplies:    { label: 'Supplies',    icon: <Package size={14} />,       color: '#2a5c7a' },
-  shelter:     { label: 'Shelter',     icon: <Home size={14} />,          color: '#5c3a7a' },
-  information: { label: 'Information', icon: <Info size={14} />,          color: '#1a5c4a' },
-  transport:   { label: 'Transport',   icon: <Car size={14} />,           color: '#5c4a1a' },
-  other:       { label: 'Other',       icon: <MoreHorizontal size={14} />, color: '#5f5e59' },
+  items:       { label: 'Items & Supplies',  icon: <Package size={14} />,       color: '#2a5c7a' },
+  services:    { label: 'Help & Services',   icon: <Wrench size={14} />,        color: '#5c3a7a' },
+  transport:   { label: 'Rides & Transport', icon: <Car size={14} />,           color: '#5c4a1a' },
+  food:        { label: 'Food & Groceries',  icon: <Utensils size={14} />,      color: '#7a5c00' },
+  health:      { label: 'Health & Wellness', icon: <Heart size={14} />,         color: '#ba1a1a' },
+  pets:        { label: 'Pets & Animals',    icon: <PawPrint size={14} />,      color: '#4a7a2a' },
+  information: { label: 'Questions & Info',  icon: <Info size={14} />,          color: '#1a5c4a' },
+  other:       { label: 'Other',             icon: <MoreHorizontal size={14} />, color: '#5f5e59' },
 };
 
 export function CategoryChip({ category }: { category: Category }) {

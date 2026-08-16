@@ -53,7 +53,7 @@ export function getExpiryHours(urgency: Urgency): number {
 
 // ─── LOCATION JITTER (for sensitive categories) ───────────────────────────────
 
-const SENSITIVE_CATEGORIES = new Set(['health', 'shelter']);
+const SENSITIVE_CATEGORIES = new Set(['health', 'pets']);
 const JITTER_KM = 0.5; // ~500m radius jitter
 
 export function jitterCoords(
@@ -81,12 +81,13 @@ export const platformLabels: Record<SourcePlatform, string> = {
 // ─── CATEGORY OPTIONS (for selects) ──────────────────────────────────────────
 
 export const categoryOptions: Array<{ value: Category; label: string }> = [
-  { value: 'health',      label: 'Health' },
-  { value: 'food',        label: 'Food' },
-  { value: 'supplies',    label: 'Supplies' },
-  { value: 'shelter',     label: 'Shelter' },
-  { value: 'information', label: 'Information' },
-  { value: 'transport',   label: 'Transport' },
+  { value: 'items',       label: 'Items & Supplies' },
+  { value: 'services',    label: 'Help & Services' },
+  { value: 'transport',   label: 'Rides & Transport' },
+  { value: 'food',        label: 'Food & Groceries' },
+  { value: 'health',      label: 'Health & Wellness' },
+  { value: 'pets',        label: 'Pets & Animals' },
+  { value: 'information', label: 'Questions & Info' },
   { value: 'other',       label: 'Other' },
 ];
 

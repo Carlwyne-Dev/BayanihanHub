@@ -11,7 +11,7 @@ Return ONLY valid JSON with these exact fields:
 {
   "title": "Brief one-line summary of the request (max 80 chars)",
   "description": "Cleaned-up description with key details",
-  "category": "one of: health | food | supplies | shelter | information | transport | other",
+  "category": "one of: items | services | transport | food | health | pets | information | other",
   "type": "ASK or OFFER",
   "urgency": "one of: urgent | normal | low",
   "locationLabel": "Extract ONLY the map-searchable geographic location (e.g. exact hospital name, City, Province, or landmark). Strip out descriptive fluff like 'coastal sitio in', 'near the', etc. Just return the actual location name.",
@@ -61,7 +61,7 @@ export async function POST(req: NextRequest) {
     const result = {
       title:         typeof parsed.title === 'string'         ? parsed.title.slice(0, 80)          : '',
       description:   typeof parsed.description === 'string'   ? parsed.description.slice(0, 2000)  : '',
-      category:      ['health','food','supplies','shelter','information','transport','other'].includes(parsed.category)
+      category:      ['items','services','transport','food','health','pets','information','other'].includes(parsed.category)
                      ? parsed.category : 'other',
       type:          ['ASK','OFFER'].includes(parsed.type)     ? parsed.type                        : 'ASK',
       urgency:       ['urgent','normal','low'].includes(parsed.urgency) ? parsed.urgency            : 'normal',
