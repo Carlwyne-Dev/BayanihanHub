@@ -1,11 +1,11 @@
 'use client';
 
-import { useState, useEffect, Suspense } from 'react';
+import { useState, useEffect, useRef, Suspense } from 'react';
 import { useParams, useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, MapPin, Clock, ExternalLink, Share2, ShieldAlert, HeartHandshake, User, CheckCircle2, RefreshCw, Loader2, AlertCircle, X, Flag, Search, History, AlertTriangle, Package, Users, ShieldCheck, HandshakeIcon, Phone, MessageCircle } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import { TopNav } from '@/components/TopNav';
 import { Footer } from '@/components/Footer';
@@ -59,6 +59,8 @@ function RequestDetailContent() {
   const [isOwner, setIsOwner] = useState<boolean | null>(null);
   const [showResolve, setShowResolve] = useState(false);
   const [resolveLoading, setResolveLoading] = useState(false);
+  const [showFloating, setShowFloating] = useState(true);
+  const bottomCtaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetch(`/api/requests/${id}`)
@@ -94,6 +96,20 @@ function RequestDetailContent() {
     const savedName = localStorage.getItem('user_name');
     if (savedName) setOfferName(savedName);
   }, [id]);
+
+  // Hide floating banner when the bottom CTA scrolls into view
+  useEffect(() => {
+    function check() {
+      const el = bottomCtaRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      // hide floating when the top of the bottom section enters the viewport
+      setShowFloating(rect.top > window.innerHeight - 80);
+    }
+    check(); // run immediately on mount
+    window.addEventListener('scroll', check, { passive: true });
+    return () => window.removeEventListener('scroll', check);
+  }, []);
 
   async function handleOffer(attempt = 0) {
     if (!offerMsg.trim() || offerMsg.trim().length < 10) { setOfferError('Please write at least a brief message (10+ chars).'); return; }
@@ -230,7 +246,7 @@ function RequestDetailContent() {
   return (
     <div className="flex-1 flex flex-col w-full">
       <TopNav />
-      <main className="flex-grow w-full max-w-screen-xl mx-auto px-6 lg:px-12 py-8 lg:py-12">
+      <main className="flex-grow w-full max-w-screen-xl mx-auto px-6 lg:px-12 pt-8 pb-32 md:pb-12 lg:py-12">
         {justCreated && (
           <div className="flex items-center gap-2 p-4 bg-green-50 border border-green-200 rounded-xl text-green-800 text-sm font-medium mb-6">
             <CheckCircle2 size={16} /> Your request has been posted! It will appear in the feed shortly.
@@ -436,23 +452,59 @@ function RequestDetailContent() {
                     )}
                   </div>
                 ) : !hasOffered && isOwner === false && isActive ? (
-                  <div className="flex flex-col gap-4 pb-4 border-b border-outline-variant">
-                    <div>
-                      <h2 className="text-lg font-semibold text-on-background mb-1">
-                        {request.type === 'ASK' ? 'Can you lend a hand?' : 'Do you need this?'}
-                      </h2>
-                      <p className="text-sm text-on-surface-variant">
-                        {request.type === 'ASK' 
-                          ? 'Join your neighbors and make a difference today.' 
-                          : 'Reach out to coordinate and claim this offer.'}
-                      </p>
+                  <>
+                    {/* Desktop Inline Version */}
+                    <div className="hidden md:flex flex-col gap-4 pb-4 border-b border-outline-variant">
+                      <div>
+                        <h2 className="text-lg font-semibold text-on-background mb-1">
+                          {request.type === 'ASK' ? 'Can you lend a hand?' : 'Do you need this?'}
+                        </h2>
+                        <p className="text-sm text-on-surface-variant">
+                          {request.type === 'ASK' 
+                            ? 'Join your neighbors and make a difference today.' 
+                            : 'Reach out to coordinate and claim this offer.'}
+                        </p>
+                      </div>
+                      <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                        <button onClick={() => setShowOffer(true)} className="bg-primary text-on-primary text-lg font-semibold py-4 px-6 rounded-full w-full hover:opacity-90 transition-opacity flex justify-center items-center gap-2 shadow-sm">
+                          <HandshakeIcon size={20} /> {request.type === 'ASK' ? 'Offer Help' : 'Request This'}
+                        </button>
+                      </motion.div>
                     </div>
-                    <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                      <button onClick={() => setShowOffer(true)} className="bg-primary text-on-primary text-lg font-semibold py-4 px-6 rounded-full w-full hover:opacity-90 transition-opacity flex justify-center items-center gap-2">
-                        <HandshakeIcon size={20} /> {request.type === 'ASK' ? 'Offer Help' : 'Request This'}
-                      </button>
-                    </motion.div>
-                  </div>
+
+                    {/* Mobile Sticky Floating Banner */}
+                    <AnimatePresence>
+                      {showFloating && (
+                        <motion.div
+                          key="floating-cta"
+                          initial={{ y: 80, opacity: 0 }}
+                          animate={{ y: 0, opacity: 1 }}
+                          exit={{ y: 80, opacity: 0 }}
+                          transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                          className="md:hidden fixed bottom-[72px] left-0 right-0 p-4 z-[999] pointer-events-none"
+                        >
+                          <div className="pointer-events-auto bg-surface-container-lowest border border-primary/20 rounded-2xl p-4 shadow-[0_8px_30px_rgb(0,0,0,0.15)] flex flex-col gap-3 backdrop-blur-md">
+                            <div>
+                              <h2 className="text-base font-bold text-on-background">
+                                {request.type === 'ASK' ? 'Can you lend a hand?' : 'Do you need this?'}
+                              </h2>
+                              <p className="text-xs text-on-surface-variant">
+                                {request.type === 'ASK' ? 'Join your neighbors today.' : 'Reach out to claim this.'}
+                              </p>
+                            </div>
+                            <div className="flex gap-2">
+                              <button onClick={() => setShowOffer(true)} className="flex-1 bg-primary text-on-primary text-base font-semibold py-3.5 px-4 rounded-xl hover:opacity-90 transition-opacity flex justify-center items-center gap-2 shadow-sm">
+                                <HandshakeIcon size={18} /> {request.type === 'ASK' ? 'Offer Help' : 'Request This'}
+                              </button>
+                              <button onClick={handleShare} aria-label="Share" className="shrink-0 w-14 bg-surface border border-outline-variant text-secondary rounded-xl flex items-center justify-center hover:bg-surface-variant transition-colors shadow-sm">
+                                <Share2 size={20} />
+                              </button>
+                            </div>
+                          </div>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </>
                 ) : hasOffered && !showContactResult ? (
                   <div className="flex flex-col gap-3 pb-4 border-b border-outline-variant">
                     <p className="text-sm text-center text-on-surface-variant">
@@ -462,7 +514,7 @@ function RequestDetailContent() {
                   </div>
                 ) : null}
                 
-                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+                <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} className="hidden md:block">
                   <button onClick={handleShare} className="bg-surface text-secondary border border-outline-variant text-lg font-semibold py-4 px-6 rounded-full w-full hover:bg-surface-variant transition-colors">
                     Share with Neighbors
                   </button>
@@ -492,6 +544,27 @@ function RequestDetailContent() {
           </div>
         </motion.div>
       </main>
+
+      {/* Mobile-only bottom CTA — Offer Help + Share */}
+      <div ref={bottomCtaRef} className="md:hidden px-6 pb-10 pt-2 flex flex-col gap-3">
+        {!hasOffered && isOwner === false && isActive && (
+          <motion.button
+            onClick={() => setShowOffer(true)}
+            whileTap={{ scale: 0.97 }}
+            className="w-full flex items-center justify-center gap-2 bg-primary text-on-primary text-base font-semibold py-4 rounded-2xl hover:opacity-90 transition-opacity shadow-sm"
+          >
+            <HandshakeIcon size={18} /> {request.type === 'ASK' ? 'Offer Help' : 'Request This'}
+          </motion.button>
+        )}
+        <motion.button
+          onClick={handleShare}
+          whileTap={{ scale: 0.97 }}
+          className="w-full flex items-center justify-center gap-2 bg-surface border border-outline-variant text-secondary text-base font-semibold py-4 rounded-2xl hover:bg-surface-variant transition-colors shadow-sm"
+        >
+          <Share2 size={18} /> Share with Neighbors
+        </motion.button>
+      </div>
+
       <Footer />
 
       {/* Offer Modal */}
