@@ -474,7 +474,7 @@ function RequestDetailContent() {
 
                     {/* Mobile Sticky Floating Banner */}
                     <AnimatePresence>
-                      {showFloating && (
+                      {showFloating && !showOffer && (
                         <motion.div
                           key="floating-cta"
                           initial={{ y: 80, opacity: 0 }}
@@ -569,8 +569,15 @@ function RequestDetailContent() {
 
       {/* Offer Modal */}
       {showOffer && !offerResult && (
-        <div className="fixed inset-0 bg-black/50 z-50 flex items-end md:items-center justify-center p-4" onClick={() => setShowOffer(false)}>
-          <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="bg-surface-container-lowest rounded-2xl p-6 w-full max-w-md flex flex-col gap-4" onClick={e => e.stopPropagation()}>
+        <div className="fixed inset-0 bg-black/50 z-[9999] flex items-end md:items-center justify-center" onClick={() => setShowOffer(false)}>
+          <motion.div 
+            initial={{ opacity: 0, y: 60 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            exit={{ opacity: 0, y: 60 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+            className="bg-surface-container-lowest rounded-t-3xl md:rounded-2xl p-6 w-full max-w-md flex flex-col gap-4 max-h-[85vh] overflow-y-auto pb-[calc(1.5rem+72px)] md:pb-6" 
+            onClick={e => e.stopPropagation()}
+          >
             <div className="flex justify-between items-center">
               <p className="text-lg font-semibold text-on-surface">
                 {request.type === 'ASK' ? 'How can you help?' : 'Why do you need this?'}
