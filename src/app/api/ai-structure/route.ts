@@ -1,4 +1,4 @@
-export const dynamic = 'force-dynamic'
+export const dynamic = 'force-dynamic';
 import { NextRequest, NextResponse } from 'next/server';
 import Groq from 'groq-sdk';
 
@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
     }
 
     const completion = await groq.chat.completions.create({
-      model: 'llama-3.1-8b-instant',
+      model: 'openai/gpt-oss-20b',
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: `Extract structured info from this text:\n\n${text}` },
@@ -59,27 +59,27 @@ export async function POST(req: NextRequest) {
 
     // Validate and sanitize
     const result = {
-      title:         typeof parsed.title === 'string'         ? parsed.title.slice(0, 80)          : '',
-      description:   typeof parsed.description === 'string'   ? parsed.description.slice(0, 2000)  : '',
-      category:      ['items','services','transport','food','health','shelter','pets','information','other'].includes(parsed.category)
-                     ? parsed.category : 'other',
-      type:          ['ASK','OFFER'].includes(parsed.type)     ? parsed.type                        : 'ASK',
-      urgency:       ['urgent','normal','low'].includes(parsed.urgency) ? parsed.urgency            : 'normal',
-      locationLabel: typeof parsed.locationLabel === 'string'  ? parsed.locationLabel.slice(0, 100) : '',
-      contactMethod: typeof parsed.contactMethod === 'string'  ? parsed.contactMethod.slice(0, 200) : '',
-      sourceUrl:     typeof parsed.sourceUrl === 'string'      ? parsed.sourceUrl.slice(0, 500)     : '',
-      sourcePlatform:['facebook','tiktok','instagram','x','other'].includes(parsed.sourcePlatform) ? parsed.sourcePlatform : 'none',
+      title:          typeof parsed.title === 'string'          ? parsed.title.slice(0, 80)          : '',
+      description:    typeof parsed.description === 'string'    ? parsed.description.slice(0, 2000)  : '',
+      category:       ['items','services','transport','food','health','shelter','pets','information','other'].includes(parsed.category)
+                      ? parsed.category : 'other',
+      type:           ['ASK','OFFER'].includes(parsed.type)      ? parsed.type                        : 'ASK',
+      urgency:        ['urgent','normal','low'].includes(parsed.urgency) ? parsed.urgency             : 'normal',
+      locationLabel:  typeof parsed.locationLabel === 'string'   ? parsed.locationLabel.slice(0, 100) : '',
+      contactMethod:  typeof parsed.contactMethod === 'string'   ? parsed.contactMethod.slice(0, 200) : '',
+      sourceUrl:      typeof parsed.sourceUrl === 'string'       ? parsed.sourceUrl.slice(0, 500)     : '',
+      sourcePlatform: ['facebook','tiktok','instagram','x','other'].includes(parsed.sourcePlatform) ? parsed.sourcePlatform : 'none',
     };
 
     return NextResponse.json({ success: true, data: result });
-  } catch (err) {
-    console.error('[AI Structure Error]', err);
+  } catch (err: any) {
+    console.error('[AI Structure Error]', err?.message || err);
     // Fallback — return empty structure, client will show manual form
     return NextResponse.json({
       success: false,
       fallback: true,
       error: 'AI could not structure this automatically. Please fill in the fields manually.',
       data: { title: '', description: '', category: 'other', type: 'ASK', urgency: 'normal', locationLabel: '', contactMethod: '' },
-    }, { status: 200 }); // 200 so the client can handle gracefully
+    }, { status: 200 });
   }
 }

@@ -34,7 +34,7 @@ export async function POST(req: NextRequest, { params }: Params) {
     if (groqAllowed) {
       try {
         const completion = await groq.chat.completions.create({
-          model: 'llama-3.3-70b-versatile',
+          model: 'openai/gpt-oss-20b',
           messages: [
             { role: 'system', content: 'You are an AI moderator for a local community help platform. You will be given an original request for help, and a message from a user offering to help. Your job is to classify if the offer message is a legitimate, contextual response to the request, or if it is spam, gibberish, trolling, or completely unrelated. Respond with ONLY the word "VALID" if it is a reasonable attempt to help or communicate regarding the specific request. Respond with ONLY the word "INVALID" if it is keyboard smash, spam, abusive, or totally irrelevant to the request. Err on the side of VALID if unsure.' },
             { role: 'user', content: `Original Request Title: "${request.title}"\nOriginal Request Description: "${request.description}"\n\nOffer Message: "${message}"` }

@@ -46,7 +46,7 @@ Be concise and direct. Do not say "Here is the recommendation". Just give the re
 
     const chatCompletion = await groq.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
-      model: 'llama-3.1-8b-instant',
+      model: 'openai/gpt-oss-20b',
       temperature: 0.2,
       max_tokens: 150,
     });
