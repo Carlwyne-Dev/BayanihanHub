@@ -39,7 +39,10 @@ function TopNavInner() {
     setSearchQuery(val);
     if (val.trim() === '') {
       setShowSuggestions(false);
-      router.push('/');
+      // Only navigate away if we're on the feed with a search query — strip the param
+      if (pathname === '/feed' && queryParam) {
+        router.push('/feed');
+      }
     }
   };
 
