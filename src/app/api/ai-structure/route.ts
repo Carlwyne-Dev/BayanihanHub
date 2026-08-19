@@ -42,20 +42,21 @@ export async function POST(req: NextRequest) {
     }
 
     const completion = await groq.chat.completions.create({
-      model: 'openai/gpt-oss-20b',
+      model: 'groq/compound-mini',
       messages: [
         { role: 'system', content: SYSTEM_PROMPT },
         { role: 'user', content: `Extract structured info from this text:\n\n${text}` },
       ],
       temperature: 0.2,
       max_tokens: 512,
-      response_format: { type: 'json_object' },
     });
 
     const content = completion.choices[0]?.message?.content;
     if (!content) throw new Error('No response from AI');
 
-    const parsed = JSON.parse(content);
+    // Strip markdown code block wrappers if present (e.g. ```json ... ```)
+    const jsonStr = content.replace(/^```(?:json)?\s*/i, '').replace(/\s*```\s*$/, '').trim();
+    const parsed = JSON.parse(jsonStr);
 
     // Validate and sanitize
     const result = {

@@ -90,7 +90,22 @@ export default function LandingPage() {
           </motion.div>
           
           <motion.h1 variants={fadeInUp} className="text-5xl md:text-6xl font-bold text-on-surface tracking-tight leading-[1.15] mb-6">
-            Bayanihan in the digital age.
+            <span className="relative inline-block group cursor-default z-20">
+              <span className="relative transition-colors duration-300">
+                Bayanihan
+                <span className="absolute left-0 right-0 bottom-1.5 h-1.5 bg-primary/20 rounded-full scale-x-100 group-hover:scale-x-105 group-hover:bg-primary/40 transition-all duration-300 origin-left z-[-1]" />
+              </span>
+              {/* Premium Glass Tooltip */}
+              <span className="absolute top-[calc(100%+8px)] left-0 w-80 p-5 bg-surface/60 backdrop-blur-2xl border border-outline-variant/50 rounded-2xl opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-400 ease-out pointer-events-none shadow-[0_20px_40px_-15px_rgba(0,0,0,0.2)] flex items-start gap-4 text-left font-sans tracking-normal leading-relaxed">
+                <span className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center shrink-0">
+                  <HeartHandshake size={20} />
+                </span>
+                <span className="text-base text-on-surface font-medium pt-0.5">
+                  The Filipino spirit of communal unity, work, and cooperation to achieve a shared goal.
+                </span>
+              </span>
+            </span>{' '}
+            in the digital age.
           </motion.h1>
           
           <motion.p variants={fadeInUp} className="text-lg md:text-xl text-on-surface-variant max-w-xl mb-10 leading-relaxed">

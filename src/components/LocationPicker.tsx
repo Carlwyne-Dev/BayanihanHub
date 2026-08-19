@@ -64,6 +64,10 @@ export function LocationPicker({ label, lat, lng, onChange }: LocationPickerProp
   useEffect(() => {
     if (label === prevLabel.current) return; // no change
     prevLabel.current = label;
+
+    // If the new label matches what the user is typing, don't interfere with autocomplete
+    if (label === query) return;
+
     isUserTyping.current = false;
     setQuery(label);
 
@@ -75,7 +79,7 @@ export function LocationPicker({ label, lat, lng, onChange }: LocationPickerProp
       setSearching(true);
       try {
         let res = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(label)}&limit=5&countrycodes=ph`,
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(label)}&limit=5`,
           { headers: { 'User-Agent': 'BayanihanHubAI/1.0' } }
         );
         let data: Suggestion[] = await res.json();
@@ -86,7 +90,7 @@ export function LocationPicker({ label, lat, lng, onChange }: LocationPickerProp
           const broaderQuery = parts[parts.length - 1].trim();
           if (broaderQuery.length > 2) {
             res = await fetch(
-              `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(broaderQuery)}&limit=5&countrycodes=ph`,
+              `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(broaderQuery)}&limit=5`,
               { headers: { 'User-Agent': 'BayanihanHubAI/1.0' } }
             );
             data = await res.json();
@@ -124,7 +128,7 @@ export function LocationPicker({ label, lat, lng, onChange }: LocationPickerProp
       setSearching(true);
       try {
         let res = await fetch(
-          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5&countrycodes=ph`,
+          `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&limit=5`,
           { headers: { 'User-Agent': 'BayanihanHubAI/1.0' } }
         );
         let data: Suggestion[] = await res.json();
@@ -135,7 +139,7 @@ export function LocationPicker({ label, lat, lng, onChange }: LocationPickerProp
           const broaderQuery = parts[parts.length - 1].trim();
           if (broaderQuery.length > 2) {
             res = await fetch(
-              `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(broaderQuery)}&limit=5&countrycodes=ph`,
+              `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(broaderQuery)}&limit=5`,
               { headers: { 'User-Agent': 'BayanihanHubAI/1.0' } }
             );
             data = await res.json();
