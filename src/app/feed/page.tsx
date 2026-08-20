@@ -102,7 +102,6 @@ function FeedContent() {
         params.set('lat', String(userCoords.lat));
         params.set('lng', String(userCoords.lng));
       }
-      if (activeSort === 'urgent') params.set('urgency', 'urgent');
       if (queryParam) params.set('q', queryParam);
       params.set('limit', '50');
       const res = await fetch(`/api/requests?${params}`);
